@@ -1,0 +1,64 @@
+name: airflow
+channels:
+- defaults
+dependencies:
+- certifi=2016.8.31=py35_0
+- ncurses=5.9=9
+- openssl=1.0.2h=2
+- pip=8.1.2=py35_0
+- python=3.5.2=2
+- readline=6.2=0
+- setuptools=26.1.1=py35_0
+- sqlite=3.13.0=1
+- tk=8.5.19=0
+- wheel=0.29.0=py35_0
+- xz=5.2.2=0
+- zlib=1.2.8=3
+- pip:
+  - airflow==1.7.1.3
+  - alembic==0.8.8
+  - babel==1.3
+  - bitarray==0.8.1
+  - certifi==2016.8.31
+  - chartkick==0.4.2
+  - croniter==0.3.12
+  - dill==0.2.5
+  - docutils==0.12
+  - flask==0.10.1
+  - flask-admin==1.4.0
+  - flask-cache==0.13.1
+  - flask-login==0.2.11
+  - flask-wtf==0.12
+  - funcsigs==0.4
+  - future==0.15.2
+  - gunicorn==19.3.0
+  - hive-thrift-py==0.0.1
+  - impyla==0.13.8
+  - itsdangerous==0.24
+  - jinja2==2.8
+  - lockfile==0.12.2
+  - mako==1.0.4
+  - markdown==2.6.7
+  - markupsafe==0.23
+  - numpy==1.11.2
+  - pandas==0.19.0
+  - pip==8.1.2
+  - ply==3.9
+  - pygments==2.1.3
+  - pyhive==0.2.1
+  - python-daemon==2.1.1
+  - python-dateutil==2.5.3
+  - python-editor==1.0.1
+  - pytz==2016.7
+  - requests==2.11.1
+  - setproctitle==1.1.10
+  - setuptools==26.1.1
+  - six==1.10.0
+  - sqlalchemy==1.1.2
+  - thrift==0.9.3
+  - thriftpy==0.3.9
+  - unicodecsv==0.14.1
+  - werkzeug==0.11.11
+  - wheel==0.29.0
+  - wtforms==2.1
+
