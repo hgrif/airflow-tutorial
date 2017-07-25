@@ -56,10 +56,10 @@ Similarly, when running into HiveOperator errors, do a `pip install apache-airfl
 
 ### Run Airflow
 
-We have to initialize its database before we can use Airflow.
+You have to initialize its database before you can use Airflow.
 The database contains information about historical & running jobs, connections to external data sources, 
 user management, etc.
-Once the database is set up, we'll access Airflow's UI by running a web server and we can start running jobs.
+Once the database is set up, Airflow's UI can be accessed by running a web server and jobs can be started.
 
 The default database is a SQLite database, which is fine for this tutorial.
 In a production setting you'll probably be using something like MySQL or PostgreSQL.
@@ -93,7 +93,7 @@ It should look something like this:
 
 <img src="https://airflow.incubator.apache.org/_images/dags.png" style="width: 70%;"/>
 
-With the web server running we'll start a job from a new terminal window.
+With the web server running jobs can be started from a new terminal window.
 Open a new terminal, activate the virtual environment and set the environment variable `$AIRFLOW_HOME` for this terminal as well:
 
 ```{bash}
@@ -111,19 +111,21 @@ $ airflow run example_bash_operator runme_0 2015-01-01
 
 And check in the web UI that it has run by going to Browse -> Task Instances.
 
-This concludes all the setting up that we need for this tutorial.
+This concludes all the setting up that you need for this tutorial.
 For more information on configuration check the sections on [Configuration](https://airflow.incubator.apache.org/configuration.html) and [Security](https://airflow.incubator.apache.org/security.html) of the Airflow documentation.
 Check the [Airflow repository](https://github.com/apache/incubator-airflow/tree/master/scripts) for `upstart` and `systemd` templates.
 
-Tips:
-* Python 3 doesn't really seem to be supported by Airflow, so go for Python 2.
+
+### Tips
+
+* Python 3 doesn't really seem to be supported by Airflow (especially the operators in `contrib` may break), so go for Python 2.
 * Airflow logs extensively, so pick your log folder carefully.
-* Set the timezone of your production to be UTC: Airflow assumes it's UTC.
+* Set the timezone of your production machine to UTC: Airflow assumes it's UTC.
 
 
 ## 2. Jobs
 
-We'll create a job by specifying actions as a Directed Acyclic Graph (DAG) in Python, test it and let Airflow run it.
+We'll create a job by specifying actions as a Directed Acyclic Graph (DAG) in Python.
 The tasks of a job make up a Graph; the graph is Directed because the tasks are ordered; and we don't want to get stuck in an eternal loop so the graph also has to be Acyclic.
 
 The figure below shows an example of a DAG:
@@ -133,7 +135,7 @@ The figure below shows an example of a DAG:
 
 ### Create a DAG file
 
-Go to the folder that you've designated to be your `AIRFLOW_HOME` and find the DAGs folder located in subfolder `dags/`.
+Go to the folder that you've designated to be your `AIRFLOW_HOME` and find the DAGs folder located in subfolder `dags/` (if you cannot find, check the setting `dags_folder` in `$AIRFLOW_HOME/airflow.cfg`).
 Create a Python file with the name `airflow_tutorial.py` that will contain your DAG.
 
 
@@ -179,10 +181,10 @@ with DAG('airflow_tutorial_v01',
 With `schedule_interval='0 * * * *'` we've specified a run at every hour 0; the DAG will run each day at 00:00.
 See [crontab.guru](https://crontab.guru/#0_*_*_*_*) for help deciphering cron schedule expressions.
 Alternatively, you can use strings like `'@daily'` and `'@hourly'`.
-I prefer the cron notation because it's a bit more flexible than `'@daily'` and `'@hourly'`.
 
 We've used a [context manager](https://jeffknupp.com/blog/2016/03/07/python-with-context-managers/) to create a DAG (new since 1.8).
 All the tasks for the DAG should be indented to indicate that they are part of this DAG.
+Without this context manager you'd have to set the `dag` parameter for each of your tasks.
 
 Airflow will generate DAG runs from the `start_date` with the specified `schedule_interval`.
 Once a DAG is active, Airflow continuously checks in the database if all the DAG runs have successfully ran since the `start_date`.
@@ -283,7 +285,7 @@ $ python airflow_tutorial.py
 ```
 
 Airflow checks for DAGs in its `$AIRFLOW_HOME/dags/` folder.
-Move `airflow_tutorial.py` to the folder `dags/` (or `~/airflow/dags if you didn't set `$AIRFLOW_HOME`).
+Move `airflow_tutorial.py` to the folder `dags/` (or `~/airflow/dags if you didn't set `AIRFLOW_HOME`).
 Your job is automatically picked up and scheduled to run.
 
 You can manually test a single task with `airflow test`:
@@ -302,6 +304,11 @@ Use `airflow run` to manually run a task with its dependencies for a given date.
 ```{bash}
 airflow run airflow_tutorial_v01 print_world 2016-07-01
 ```
+
+### Tips 
+
+* Use the the cron notation for `schedule_interval` instead of `@daily` and `@hourly`. 
+`@daily` and `@hourly` always run after respectively midnight and the full hour, regardless of the hour/minute specified.
 
 
 ## 3. UI
