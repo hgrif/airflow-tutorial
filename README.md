@@ -106,7 +106,7 @@ Make sure that you're an in the same directory as before when using `$(pwd)`.
 Run a supplied example:
 
 ```{bash}
-$ airflow run example_bash_operator runme_0 2015-01-01
+$ airflow run example_bash_operator runme_0 2017-07-01
 ```
 
 And check in the web UI that it has run by going to Browse -> Task Instances.
@@ -137,6 +137,7 @@ The figure below shows an example of a DAG:
 
 Go to the folder that you've designated to be your `AIRFLOW_HOME` and find the DAGs folder located in subfolder `dags/` (if you cannot find, check the setting `dags_folder` in `$AIRFLOW_HOME/airflow.cfg`).
 Create a Python file with the name `airflow_tutorial.py` that will contain your DAG.
+Your job will automatically be picked up and scheduled to run.
 
 First we'll configure settings that are shared by all our tasks.
 Settings for tasks can be passed as arguments when creating them, but we can also pass a dictionary with default values to the DAG.
@@ -152,13 +153,13 @@ import datetime as dt
 
 default_args = {
     'owner': 'me',
-    'start_date': dt.datetime(2015, 6, 1),
+    'start_date': dt.datetime(2017, 6, 1),
     'retries': 1,
     'retry_delay': dt.timedelta(minutes=5),
 }
 ```
 
-These settings tell Airflow that this job is owned by `'me'`, that the job is valid since June 1st of 2015, it should not send emails and it is allowed to retry the job once if it fails with a delay of 5 minutes.
+These settings tell Airflow that this job is owned by `'me'`, that the job is valid since June 1st of 2017, it should not send emails and it is allowed to retry the job once if it fails with a delay of 5 minutes.
 Other common default arguments are email settings on failure and the end time.
 
 
@@ -196,7 +197,7 @@ The daily job for 2016-06-02 runs after 2016-06-02 23:59 and the hourly job for 
 
 From the ETL viewpoint this makes sense: you can only process the daily data for a day after it has passed.
 This can, however, ask for some juggling with date for other jobs.
-For Machine Learning models you may want to use all the data up to a given date, you'll have to add the `schedule_interval` to your `execution_date` somewhere in the job logic.j
+For Machine Learning models you may want to use all the data up to a given date, you'll have to add the `schedule_interval` to your `execution_date` somewhere in the job logic.
 
 Because Airflow saves all the (scheduled) DAG runs in its database, you should not change the `start_date` and `schedule_interval` of a DAG.
 Instead, up the version number of the DAG (e.g. `airflow_tutorial_v02`) and avoid running unnecessary tasks by using the web interface or command line tools
@@ -223,7 +224,8 @@ Give each operator an unique task ID and something to do:
 
     print_hello = BashOperator(task_id='print_hello', 
                                bash_command='echo "hello"')
-    sleep = BashOperator(task_id='sleep', bash_command='sleep 5')
+    sleep = BashOperator(task_id='sleep',
+                         bash_command='sleep 5')
     print_world = PythonOperator(task_id='print_world',
                                  python_callable=print_world)
 ```
@@ -253,7 +255,7 @@ def print_world():
 
 default_args = {
     'owner': 'me',
-    'start_date': dt.datetime(2015, 6, 1),
+    'start_date': dt.datetime(2017, 6, 1),
     'retries': 1,
     'retry_delay': dt.timedelta(minutes=5),
 }
@@ -266,7 +268,8 @@ with DAG('airflow_tutorial_v01',
 
     print_hello = BashOperator(task_id='print_hello',
                                bash_command='echo "hello"')
-    sleep = BashOperator(task_id='sleep', bash_command='sleep 5')
+    sleep = BashOperator(task_id='sleep',
+                         bash_command='sleep 5')
     print_world = PythonOperator(task_id='print_world',
                                  python_callable=print_world)
 
@@ -277,23 +280,19 @@ print_hello >> sleep >> print_world
 
 ### Test the DAG
 
-Check that the DAG is valid by executing the file with python:
+First check that DAG file contains valid Python code by executing the file with Python:
 
 ```{bash}
 $ python airflow_tutorial.py
 ```
 
-Airflow checks for DAGs in its `$AIRFLOW_HOME/dags/` folder.
-Move `airflow_tutorial.py` to the folder `dags/` (or `~/airflow/dags if you didn't set `AIRFLOW_HOME`).
-Your job is automatically picked up and scheduled to run.
-
-You can manually test a single task with `airflow test`:
+You can manually test a single task for a given `execution_date` with `airflow test`:
 
 ```{bash}
 airflow test airflow_tutorial_v01 print_world 2016-07-01
 ```
 
-This runs the task locally as if it was for the given date, ignoring other tasks and without communication to the database.
+This runs the task locally as if it was for 2017-07-01, ignoring other tasks and without communicating to the database.
 
 
 ### Run the DAG
@@ -308,6 +307,7 @@ airflow run airflow_tutorial_v01 print_world 2016-07-01
 
 * Use the the cron notation for `schedule_interval` instead of `@daily` and `@hourly`. 
 `@daily` and `@hourly` always run after respectively midnight and the full hour, regardless of the hour/minute specified.
+* Manage your connections and secrets with the [Connections](https://airflow.incubator.apache.org/configuration.html#connections) and/or [Variables](https://airflow.incubator.apache.org/ui.html#variable-view).
 
 
 ## 3. UI
