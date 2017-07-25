@@ -13,9 +13,9 @@ Make sure that you run airflow commands, know where to put your dags and have ac
 ### Install Airflow
 
 Airflow is installable with `pip` via a simple `pip install apache-airflow`.
-Either use the virtual environment as defined in `environment.yml` or install it yourself.
+Either use a separate python virtual environment or install it in your default python environment.
 
-To use the conda virtual environment as defined in `environment.yml`:
+To use the conda virtual environment as defined in `environment.yml` in this git-repo:
 
 * Install [miniconda](http://conda.pydata.org/miniconda.html).
 * Make sure that conda is on your path:
@@ -47,12 +47,11 @@ $ pip install apache-airflow
 
 Airflow used to be packaged as `airflow` but is packaged as `apache-airflow` since version 1.8.1.
 Make sure that you install any extra packages with the right Python package: e.g. use `pip install apache-airflow[dask]` if you've installed `apache-airflow` and DO NOT use `pip install airflow[dask]`.
-The latter will install an old version of Airflow next to your current version, leading to a world of hurt.
+The latter will install an old version of Airflow next to your current version, leading to a world of hurt. (because its not prefixed with _apache-_)
 
 You may run into problems if you don't have the right binaries or Python packages installed for certain backends or operators.
-When specifying support for e.g PostgreSQL when installing extra airflow packages, make sure the database is installed; do a `brew install postgresql` or `apt-get install postgresql` before the  `pip install apache-airflow[postgres]`.
+When specifying support for e.g PostgreSQL when installing extra airflow packages, make sure the database is installed; do a `brew install postgresql` or `apt-get install postgresql` before the `pip install apache-airflow[postgres]`.
 Similarly, when running into HiveOperator errors, do a `pip install apache-airflow[hive]` and make sure you can use Hive.
-
 
 ### Run Airflow
 
@@ -72,6 +71,7 @@ If you don't set the environment variable `AIRFLOW_HOME`, Airflow will create th
 Set environment variable `AIRFLOW_HOME` to e.g. your current directory `$(pwd)`:
 
 ```{bash}
+# change the default location ~/airflow if you want:
 $ export AIRFLOW_HOME="$(pwd)"
 ```
 
@@ -115,10 +115,9 @@ This concludes all the setting up that you need for this tutorial.
 For more information on configuration check the sections on [Configuration](https://airflow.incubator.apache.org/configuration.html) and [Security](https://airflow.incubator.apache.org/security.html) of the Airflow documentation.
 Check the [Airflow repository](https://github.com/apache/incubator-airflow/tree/master/scripts) for `upstart` and `systemd` templates.
 
-
 ### Tips
 
-* Python 3 doesn't really seem to be supported by Airflow (especially the operators in `contrib` may break), so go for Python 2.
+* Python 3 doesn't seem to be fully supported by Airflow (especially the operators in `contrib` may break), so go for Python 2 to be on the safe side.
 * Airflow logs extensively, so pick your log folder carefully.
 * Set the timezone of your production machine to UTC: Airflow assumes it's UTC.
 
@@ -126,6 +125,7 @@ Check the [Airflow repository](https://github.com/apache/incubator-airflow/tree/
 ## 2. Jobs
 
 We'll create a job by specifying actions as a Directed Acyclic Graph (DAG) in Python.
+In other schedulers this is often called a 'workflow'.
 The tasks of a job make up a Graph; the graph is Directed because the tasks are ordered; and we don't want to get stuck in an eternal loop so the graph also has to be Acyclic.
 
 The figure below shows an example of a DAG:
@@ -137,7 +137,6 @@ The figure below shows an example of a DAG:
 
 Go to the folder that you've designated to be your `AIRFLOW_HOME` and find the DAGs folder located in subfolder `dags/` (if you cannot find, check the setting `dags_folder` in `$AIRFLOW_HOME/airflow.cfg`).
 Create a Python file with the name `airflow_tutorial.py` that will contain your DAG.
-
 
 First we'll configure settings that are shared by all our tasks.
 Settings for tasks can be passed as arguments when creating them, but we can also pass a dictionary with default values to the DAG.
