@@ -94,7 +94,7 @@ It should look something like this:
 <img src="https://airflow.incubator.apache.org/_images/dags.png" style="width: 70%;"/>
 
 With the web server running jobs can be started from a new terminal window.
-Open a new terminal, activate the virtual environment and set the environment variable `$AIRFLOW_HOME` for this terminal as well:
+Open a new terminal, activate the virtual environment and set the environment variable `AIRFLOW_HOME` for this terminal as well:
 
 ```{bash}
 $ source activate airflow-tutorial
@@ -117,7 +117,8 @@ Check the [Airflow repository](https://github.com/apache/incubator-airflow/tree/
 
 ### Tips
 
-* Python 3 doesn't seem to be fully supported by Airflow (especially the operators in `contrib` may break), so go for Python 2 to be on the safe side.
+* Both Python 2 and 3 are be supported by Airflow.
+However, some of the lesser used parts (e.g. operators in `contrib`) may not support Python 3. 
 * Airflow logs extensively, so pick your log folder carefully.
 * Set the timezone of your production machine to UTC: Airflow assumes it's UTC.
 
@@ -289,19 +290,16 @@ $ python airflow_tutorial.py
 You can manually test a single task for a given `execution_date` with `airflow test`:
 
 ```{bash}
-airflow test airflow_tutorial_v01 print_world 2016-07-01
+$ airflow test airflow_tutorial_v01 print_world 2016-07-01
 ```
 
 This runs the task locally as if it was for 2017-07-01, ignoring other tasks and without communicating to the database.
 
 
-### Run the DAG
+### Activate the DAG
 
-Use `airflow run` to manually run a task with its dependencies for a given date.
+Now that you're confident that your dag works, turn on the DAG in the web UI and sit back while Airflow starts backfilling the dag runs!
 
-```{bash}
-airflow run airflow_tutorial_v01 print_world 2016-07-01
-```
 
 ### Tips 
 
@@ -310,17 +308,17 @@ airflow run airflow_tutorial_v01 print_world 2016-07-01
 * Manage your connections and secrets with the [Connections](https://airflow.incubator.apache.org/configuration.html#connections) and/or [Variables](https://airflow.incubator.apache.org/ui.html#variable-view).
 
 
-## 3. UI
+## 3. Exercises
+
+You've set up Airflow, created a DAG and ran a job; time to go deeper!
+
+- Change the interval to every 30 minutes.
+- Use a sensor to add daily of 5 minutes before starting. 
+- Implement templating for the `BashOperator`: print the `execution_date` instead of `'hello'` (check the [original tutorial](https://airflow.incubator.apache.org/tutorial.html#templating-with-jinja) and the [example DAG](https://github.com/apache/incubator-airflow/blob/master/airflow/example_dags/example_bash_operator.py)).
+- Implement templating for the `PythonOperator`: print the `execution_date` with one hour added in the function `print_world()` (check the documentation of the [`PythonOperator`](https://airflow.incubator.apache.org/code.html#airflow.operators.PythonOperator)).
 
 
-## 4. Conclusion
-
-You've set up Airflow, created a DAG and ran a job. 
-Try changing the interval to every minute, implement templating as in the [original tutorial](https://airflow.incubator.apache.org/tutorial.html#testing) and checking our more [example DAGs](https://github.com/apache/incubator-airflow/tree/master/airflow/example_dags). 
-Read the [docs](https://pythonhosted.org/airflow/index.html) before really using Airflow.
-
-
-## 5. Resources
+## 4. Resources
 
 * [Airflow documentation](https://pythonhosted.org/airflow/tutorial.html)
 * [ETL best practices with Airflow](https://gtoonstra.github.io/etl-with-airflow/)
