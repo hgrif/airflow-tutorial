@@ -1,13 +1,13 @@
 # Airflow tutorial
 
 This tutorial is loosely based on the Airflow tutorial in the [official documentation](https://pythonhosted.org/airflow/tutorial.html).
-It will walk you through the basics of setting up Airflow and creating an Airflow job.
+It will walk you through the basics of setting up Airflow and creating an Airflow workflow.
 
 
 ## 1. Setup
 
 You can skip this section if Airflow is already set up.
-Make sure that you run airflow commands, know where to put your dags and have access to the web UI.
+Make sure that you can run airflow commands, know where to put your DAGs and have access to the web UI.
 
 
 ### Install Airflow
@@ -37,7 +37,7 @@ $ conda env create -f environment.yml
 $ source activate airflow-tutorial
 ```
 
-You should now have a (almost) working Airflow installation.
+You should now have an (almost) working Airflow installation.
 
 Alternatively, install Airflow yourself by running:
 
@@ -46,25 +46,25 @@ $ pip install apache-airflow
 ```
 
 Airflow used to be packaged as `airflow` but is packaged as `apache-airflow` since version 1.8.1.
-Make sure that you install any extra packages with the right Python package: e.g. use `pip install apache-airflow[dask]` if you've installed `apache-airflow` and DO NOT use `pip install airflow[dask]`.
-The latter will install an old version of Airflow next to your current version, leading to a world of hurt. (because its not prefixed with _apache-_)
+Make sure that you install any extra packages with the right Python package: e.g. use `pip install apache-airflow[dask]` if you've installed `apache-airflow` and do not use `pip install airflow[dask]`.
+Leaving out the prefix `apache-` will install an old version of Airflow next to your current version, leading to a world of hurt.
 
 You may run into problems if you don't have the right binaries or Python packages installed for certain backends or operators.
-When specifying support for e.g PostgreSQL when installing extra airflow packages, make sure the database is installed; do a `brew install postgresql` or `apt-get install postgresql` before the `pip install apache-airflow[postgres]`.
+When specifying support for e.g. PostgreSQL when installing extra Airflow packages, make sure the database is installed; do a `brew install postgresql` or `apt-get install postgresql` before the `pip install apache-airflow[postgres]`.
 Similarly, when running into HiveOperator errors, do a `pip install apache-airflow[hive]` and make sure you can use Hive.
 
 ### Run Airflow
 
-You have to initialize its database before you can use Airflow.
-The database contains information about historical & running jobs, connections to external data sources, 
+Before you can use Airflow you have to initialize its database.
+The database contains information about historical & running workflows, connections to external data sources, 
 user management, etc.
-Once the database is set up, Airflow's UI can be accessed by running a web server and jobs can be started.
+Once the database is set up, Airflow's UI can be accessed by running a web server and workflows can be started.
 
 The default database is a SQLite database, which is fine for this tutorial.
 In a production setting you'll probably be using something like MySQL or PostgreSQL.
-As this database stores the state of everything related to Airflow, you'll probably want to back it up.
+You'll probably want to back it up as this database stores the state of everything related to Airflow.
 
-Airflow will use the directory set in the environment variable `AIRFLOW_HOME` to store its configuration and our SQlite databse.
+Airflow will use the directory set in the environment variable `AIRFLOW_HOME` to store its configuration and our SQlite database.
 This directory will be used after your first Airflow command.
 If you don't set the environment variable `AIRFLOW_HOME`, Airflow will create the directory `~/airflow/` to put its files in.
 
@@ -93,7 +93,7 @@ It should look something like this:
 
 <img src="https://airflow.incubator.apache.org/_images/dags.png" style="width: 70%;"/>
 
-With the web server running jobs can be started from a new terminal window.
+With the web server running workflows can be started from a new terminal window.
 Open a new terminal, activate the virtual environment and set the environment variable `AIRFLOW_HOME` for this terminal as well:
 
 ```{bash}
@@ -112,33 +112,41 @@ $ airflow run example_bash_operator runme_0 2017-07-01
 And check in the web UI that it has run by going to Browse -> Task Instances.
 
 This concludes all the setting up that you need for this tutorial.
-For more information on configuration check the sections on [Configuration](https://airflow.incubator.apache.org/configuration.html) and [Security](https://airflow.incubator.apache.org/security.html) of the Airflow documentation.
-Check the [Airflow repository](https://github.com/apache/incubator-airflow/tree/master/scripts) for `upstart` and `systemd` templates.
 
 ### Tips
 
 * Both Python 2 and 3 are be supported by Airflow.
-However, some of the lesser used parts (e.g. operators in `contrib`) may not support Python 3. 
+However, some of the lesser used parts (e.g. operators in `contrib`) might not support Python 3. 
+* For more information on configuration check the sections on [Configuration](https://airflow.incubator.apache.org/configuration.html) and [Security](https://airflow.incubator.apache.org/security.html) of the Airflow documentation.
+* Check the [Airflow repository](https://github.com/apache/incubator-airflow/tree/master/scripts) for `upstart` and `systemd` templates.
 * Airflow logs extensively, so pick your log folder carefully.
 * Set the timezone of your production machine to UTC: Airflow assumes it's UTC.
 
 
-## 2. Jobs
+## 2. Workflows
 
-We'll create a job by specifying actions as a Directed Acyclic Graph (DAG) in Python.
-In other schedulers this is often called a 'workflow'.
-The tasks of a job make up a Graph; the graph is Directed because the tasks are ordered; and we don't want to get stuck in an eternal loop so the graph also has to be Acyclic.
+We'll create a workflow by specifying actions as a Directed Acyclic Graph (DAG) in Python.
+The tasks of a workflow make up a Graph; the graph is Directed because the tasks are ordered; and we don't want to get stuck in an eternal loop so the graph also has to be Acyclic.
 
 The figure below shows an example of a DAG:
 
 <img src="https://airflow.incubator.apache.org/_images/subdag_before.png" style="width: 70%;"/>
+
+The DAG of this tutorial is a bit easier.
+It will consist of the following tasks:
+
+* print `'hello'`
+* wait 5 seconds
+* print `'world` 
+
+and we'll plan daily execution of this workflow.
 
 
 ### Create a DAG file
 
 Go to the folder that you've designated to be your `AIRFLOW_HOME` and find the DAGs folder located in subfolder `dags/` (if you cannot find, check the setting `dags_folder` in `$AIRFLOW_HOME/airflow.cfg`).
 Create a Python file with the name `airflow_tutorial.py` that will contain your DAG.
-Your job will automatically be picked up and scheduled to run.
+Your workflow will automatically be picked up and scheduled to run.
 
 First we'll configure settings that are shared by all our tasks.
 Settings for tasks can be passed as arguments when creating them, but we can also pass a dictionary with default values to the DAG.
@@ -160,7 +168,7 @@ default_args = {
 }
 ```
 
-These settings tell Airflow that this job is owned by `'me'`, that the job is valid since June 1st of 2017, it should not send emails and it is allowed to retry the job once if it fails with a delay of 5 minutes.
+These settings tell Airflow that this workflow is owned by `'me'`, that the workflow is valid since June 1st of 2017, it should not send emails and it is allowed to retry the workflow once if it fails with a delay of 5 minutes.
 Other common default arguments are email settings on failure and the end time.
 
 
@@ -193,12 +201,12 @@ Any missing DAG runs are automatically scheduled.
 When you initialize on 2016-01-04 a DAG with a `start_date` at 2016-01-01 and a daily `schedule_interval`, Airflow will schedule DAG runs for all the days between 2016-01-01 and 2016-01-04.
 
 A run starts _after_ the time for the run has passed.
-The time for which the job runs is called the `execution_date`.
-The daily job for 2016-06-02 runs after 2016-06-02 23:59 and the hourly job for 2016-07-03 01:00 starts after 2016-07-03 01:59.
+The time for which the workflow runs is called the `execution_date`.
+The daily workflow for 2016-06-02 runs after 2016-06-02 23:59 and the hourly workflow for 2016-07-03 01:00 starts after 2016-07-03 01:59.
 
 From the ETL viewpoint this makes sense: you can only process the daily data for a day after it has passed.
-This can, however, ask for some juggling with date for other jobs.
-For Machine Learning models you may want to use all the data up to a given date, you'll have to add the `schedule_interval` to your `execution_date` somewhere in the job logic.
+This can, however, ask for some juggling with date for other workflows.
+For Machine Learning models you may want to use all the data up to a given date, you'll have to add the `schedule_interval` to your `execution_date` somewhere in the workflow logic.
 
 Because Airflow saves all the (scheduled) DAG runs in its database, you should not change the `start_date` and `schedule_interval` of a DAG.
 Instead, up the version number of the DAG (e.g. `airflow_tutorial_v02`) and avoid running unnecessary tasks by using the web interface or command line tools
@@ -212,7 +220,7 @@ You don't want to skip an hour because daylight savings kicks in (or out).
 Tasks are represented by operators that either perform an action, transfer data, or sense if something has been done.
 Examples of actions are running a bash script or calling a Python function; of transfers are copying tables between databases or uploading a file; and of sensors are checking if a file exists or data has been added to a database.
 
-We'll create a job consisting of three tasks: we'll print 'hello', wait for 10 seconds and finally print 'world'. 
+We'll create a workflow consisting of three tasks: we'll print 'hello', wait for 10 seconds and finally print 'world'. 
 The first two are done with the `BashOperator` and the latter with the `PythonOperator`.
 Give each operator an unique task ID and something to do:
 
@@ -303,6 +311,7 @@ Now that you're confident that your dag works, turn on the DAG in the web UI and
 
 ### Tips 
 
+* Make your DAGs idempotent: rerunning them should give the game results.
 * Use the the cron notation for `schedule_interval` instead of `@daily` and `@hourly`. 
 `@daily` and `@hourly` always run after respectively midnight and the full hour, regardless of the hour/minute specified.
 * Manage your connections and secrets with the [Connections](https://airflow.incubator.apache.org/configuration.html#connections) and/or [Variables](https://airflow.incubator.apache.org/ui.html#variable-view).
@@ -310,12 +319,12 @@ Now that you're confident that your dag works, turn on the DAG in the web UI and
 
 ## 3. Exercises
 
-You've set up Airflow, created a DAG and ran a job; time to go deeper!
+You now know the basics of setting up Airflow, creating a DAG and turning it on; time to go deeper!
 
-- Change the interval to every 30 minutes.
-- Use a sensor to add daily of 5 minutes before starting. 
-- Implement templating for the `BashOperator`: print the `execution_date` instead of `'hello'` (check the [original tutorial](https://airflow.incubator.apache.org/tutorial.html#templating-with-jinja) and the [example DAG](https://github.com/apache/incubator-airflow/blob/master/airflow/example_dags/example_bash_operator.py)).
-- Implement templating for the `PythonOperator`: print the `execution_date` with one hour added in the function `print_world()` (check the documentation of the [`PythonOperator`](https://airflow.incubator.apache.org/code.html#airflow.operators.PythonOperator)).
+* Change the interval to every 30 minutes.
+* Use a sensor to add a delay of 5 minutes before starting. 
+* Implement templating for the `BashOperator`: print the `execution_date` instead of `'hello'` (check out the [original tutorial](https://airflow.incubator.apache.org/tutorial.html#templating-with-jinja) and the [example DAG](https://github.com/apache/incubator-airflow/blob/master/airflow/example_dags/example_bash_operator.py)).
+* Implement templating for the `PythonOperator`: print the `execution_date` with one hour added in the function `print_world()` (check out the documentation of the [`PythonOperator`](https://airflow.incubator.apache.org/code.html#airflow.operators.PythonOperator)).
 
 
 ## 4. Resources
