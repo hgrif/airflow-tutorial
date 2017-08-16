@@ -2,6 +2,7 @@
 
 This tutorial is loosely based on the Airflow tutorial in the [official documentation](https://pythonhosted.org/airflow/tutorial.html).
 It will walk you through the basics of setting up Airflow and creating an Airflow workflow.
+This tutorial was published on the blog of [GoDataDriven](https://blog.godatadriven.com/practical-airflow-tutorial).
 
 
 ## 1. Setup
