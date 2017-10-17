@@ -312,7 +312,7 @@ Now that you're confident that your dag works, turn on the DAG in the web UI and
 
 ### Tips 
 
-* Make your DAGs idempotent: rerunning them should give the game results.
+* Make your DAGs idempotent: rerunning them should give the same results.
 * Use the the cron notation for `schedule_interval` instead of `@daily` and `@hourly`. 
 `@daily` and `@hourly` always run after respectively midnight and the full hour, regardless of the hour/minute specified.
 * Manage your connections and secrets with the [Connections](https://airflow.incubator.apache.org/configuration.html#connections) and/or [Variables](https://airflow.incubator.apache.org/ui.html#variable-view).
