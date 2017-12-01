@@ -299,7 +299,7 @@ $ python airflow_tutorial.py
 You can manually test a single task for a given `execution_date` with `airflow test`:
 
 ```{bash}
-$ airflow test airflow_tutorial_v01 print_world 2016-07-01
+$ airflow test airflow_tutorial_v01 print_world 2017-07-01
 ```
 
 This runs the task locally as if it was for 2017-07-01, ignoring other tasks and without communicating to the database.
@@ -307,7 +307,13 @@ This runs the task locally as if it was for 2017-07-01, ignoring other tasks and
 
 ### Activate the DAG
 
-Now that you're confident that your dag works, turn on the DAG in the web UI and sit back while Airflow starts backfilling the dag runs!
+Now that you're confident that your dag works, let's set it to run automatically! To do so, the scheduler needs to be turned on; the scheduler monitors all tasks and all DAGs and triggers the task instances whose dependencies have been met. Open a new terminal, activate the virtual environment and set the environment variable `AIRFLOW_HOME` for this terminal, and type
+
+```bash
+$ airflow scheduler
+```
+
+Once the scheduler is up and running, refresh the DAGs page in the web UI. You should see `airflow_tutorial_v01` in the list of DAGs with an on/off switch next to it. Turn on the DAG in the web UI and sit back while Airflow starts backfilling the dag runs!
 
 
 ### Tips 
