@@ -188,7 +188,7 @@ with DAG('airflow_tutorial_v01',
          ) as dag:
 ```
 
-With `schedule_interval='0 * * * *'` we've specified a run at every hour 0; the DAG will run each day at 00:00.
+With `schedule_interval='0 0 * * *'` we've specified a run at every hour 0; the DAG will run each day at 00:00.
 See [crontab.guru](https://crontab.guru/#0_*_*_*_*) for help deciphering cron schedule expressions.
 Alternatively, you can use strings like `'@daily'` and `'@hourly'`.
 
