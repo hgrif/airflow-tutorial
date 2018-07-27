@@ -339,4 +339,4 @@ You now know the basics of setting up Airflow, creating a DAG and turning it on;
 * [Airflow documentation](https://airflow.apache.org/index.html)
 * [ETL best practices with Airflow](https://gtoonstra.github.io/etl-with-airflow/)
 * [Airflow: Tips, Tricks, and Pitfalls](https://medium.com/handy-tech/airflow-tips-tricks-and-pitfalls-9ba53fba14eb)
-* [Kubernetes Custom controller for dpeloying Airflow](https://github.com/GoogleCloudPlatform/airflow-operator)
+* [Kubernetes Custom controller for deploying Airflow](https://github.com/GoogleCloudPlatform/airflow-operator)
