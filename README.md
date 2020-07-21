@@ -336,6 +336,7 @@ You now know the basics of setting up Airflow, creating a DAG and turning it on;
 
 ## 4. Resources
 
+* [Data Pipelines with Apache Airflow](https://www.manning.com/books/data-pipelines-with-apache-airflow)
 * [Airflow documentation](https://airflow.apache.org/index.html)
 * [ETL best practices with Airflow](https://gtoonstra.github.io/etl-with-airflow/)
 * [Airflow: Tips, Tricks, and Pitfalls](https://medium.com/handy-tech/airflow-tips-tricks-and-pitfalls-9ba53fba14eb)
