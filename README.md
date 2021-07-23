@@ -81,7 +81,7 @@ or any other suitable directory.
 Next, initialize the database:
 
 ```{bash}
-$ airflow initdb
+$ airflow db init
 ```
 
 Now start the web server and go to [localhost:8080](http://localhost:8080/) to check out the UI:
