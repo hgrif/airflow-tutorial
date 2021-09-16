@@ -1,0 +1,14 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+flask = "==1.0"
+apache-airflow = {extras = ["password"],version = "*"}
+pika = "*"
+
+[requires]
+python_version = "3.5"
