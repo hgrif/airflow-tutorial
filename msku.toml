@@ -1,0 +1,20 @@
+[[dags]]
+dag_id = 'msku'
+schedule_interval = '@once'
+
+ 
+[[sheetstobq]]
+ 
+dag_id = 'msku'
+ 
+ 
+task_id = 'msku_data'
+ 
+ 
+destination_table = 'noonbistratg.common.msku_def'
+ 
+ 
+sheet_url = 'https://docs.google.com/spreadsheets/d/1eJu3wD-DUJZE5qsmsr2_DeuR2p0EyO84YZxG1lGnzos/edit?usp=sharing'
+ 
+ 
+tabname = 'msku'
